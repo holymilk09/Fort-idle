@@ -18,6 +18,10 @@ namespace FortIdle
         public float BossHp;
         public float Size = 1f;
         public bool BossNight;
+        public float Hpx = 1f;
+        public float EliteChance;
+        public int Tier = 1;
+        public int BruteTier = 1;
     }
 
     public static class ThreatMath
@@ -91,6 +95,7 @@ namespace FortIdle
             plan.Threat = plan.BaseBudget * plan.Band * valve;
             plan.Ratio = plan.Power <= 1f ? 99f : plan.Threat / plan.Power;
             FillRoster(plan);
+            FillElites(plan);
             return plan;
         }
 
@@ -167,6 +172,17 @@ namespace FortIdle
             plan.BruteHp = bruteBase;
             plan.BossHp = plan.Bosses > 0 ? bossBudget : 0f;
             plan.Size = Mathf.Sqrt(Mathf.Max(1f, hpMult));
+        }
+
+        static void FillElites(NightPlan plan)
+        {
+            float shamblerBase = FortWorld.Config.monsters.hitPoints;
+            if (shamblerBase < 1f)
+                shamblerBase = 60f;
+            plan.Hpx = plan.ShamblerHp > 0f ? plan.ShamblerHp / shamblerBase : 1f;
+            plan.EliteChance = MonsterAffix.EliteChance(plan.Night);
+            plan.Tier = MonsterAffix.FodderTier(plan.Hpx, plan.Threat);
+            plan.BruteTier = MonsterAffix.ThreatTier(plan.Threat);
         }
 
         public static void Authored(int night, out int shamblers, out int brutes, out int bosses)

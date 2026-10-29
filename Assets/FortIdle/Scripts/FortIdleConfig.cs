@@ -39,6 +39,7 @@ namespace FortIdle
         public HeroCombatTuning heroCombat = new HeroCombatTuning();
         public DropTuning drops = new DropTuning();
         public ProgressionTuning progression = new ProgressionTuning();
+        public EliteTuning elites = new EliteTuning();
         public QualityTuning quality = new QualityTuning();
 
         [Serializable]
@@ -1861,6 +1862,109 @@ public float padRangeFactor = 0.62f;
 
             [Tooltip("ESTIMATE. How close the hero stands to cook, spend, or research.")]
             public float useRadius = 2.3f;
+        }
+
+        [Serializable]
+        public class EliteTuning
+        {
+            [Tooltip("SPEC. Elites roll from the night after this one. Chance = perNight x (night - this).")]
+            public int eliteStartNight = 5;
+
+            [Tooltip("SPEC. Elite chance added per night past the start night.")]
+            public float elitePerNight = 0.02f;
+
+            [Tooltip("SPEC. Highest elite chance.")]
+            public float eliteMax = 0.25f;
+
+            [Tooltip("SPEC. Visual tier an elite shows at least. Champion = 3.")]
+            public int eliteMinTier = 3;
+
+            [Tooltip("SPEC. Shambler HP multiplier past the count cap that promotes to tier 2 (Ghoul).")]
+            public float tierPromoteAtHpx = 2f;
+
+            [Tooltip("SPEC. Shambler HP multiplier that promotes to tier 3 (Wight). Every x2 above base is a tier.")]
+            public float championAtHpx = 4f;
+
+            [Tooltip("SPEC. Night Threat that promotes every non-boss to at least tier 2. 0 turns it off.")]
+            public float veteranAtThreat = 8000f;
+
+            [Tooltip("ESTIMATE. Armored, Swift, Burning, Shielded, Splitter, Regen roll weights. 0 turns an affix off.")]
+            public float armoredWeight = 1f;
+
+            [Tooltip("ESTIMATE. Swift roll weight.")]
+            public float swiftWeight = 1f;
+
+            [Tooltip("ESTIMATE. Burning roll weight.")]
+            public float burningWeight = 1f;
+
+            [Tooltip("ESTIMATE. Shielded roll weight.")]
+            public float shieldedWeight = 1f;
+
+            [Tooltip("ESTIMATE. Splitter roll weight.")]
+            public float splitterWeight = 1f;
+
+            [Tooltip("ESTIMATE. Regen roll weight.")]
+            public float regenWeight = 1f;
+
+            [Tooltip("SPEC. Armored hit point multiplier.")]
+            public float armoredHp = 1.5f;
+
+            [Tooltip("SPEC. Swift move speed multiplier.")]
+            public float swiftSpeed = 1.4f;
+
+            [Tooltip("SPEC. Hits a Shielded elite blocks. Burn and spike ticks do not count.")]
+            public int shieldHits = 3;
+
+            [Tooltip("SPEC. Small shamblers a Splitter leaves on death.")]
+            public int splitCount = 2;
+
+            [Tooltip("ESTIMATE. Each split shambler's hit points, as a share of the parent's max.")]
+            public float splitHpShare = 0.25f;
+
+            [Tooltip("ESTIMATE. Live split shamblers allowed at once. The count cap also holds.")]
+            public int splitMaxLive = 24;
+
+            [Tooltip("LAYOUT. Sideways gap between split shamblers, meters.")]
+            public float splitSpread = 0.6f;
+
+            [Tooltip("ESTIMATE. Regen heal per second, as a share of max hit points.")]
+            public float regenPerSecond = 0.04f;
+
+            [Tooltip("ESTIMATE. Seconds without damage before Regen starts.")]
+            public float regenCalmSeconds = 2.5f;
+
+            [Tooltip("FEEL. Extra scale per tier above 1.")]
+            public float tierScaleStep = 0.08f;
+
+            [Tooltip("FEEL. Extra scale on an elite.")]
+            public float eliteScale = 0.06f;
+
+            [Tooltip("FEEL. Scale of a split shambler.")]
+            public float splitScale = 0.7f;
+
+            [Tooltip("FEEL. Tier 2 tint (Ghoul: pale). Multiplies the base color.")]
+            public Color tier2Tint = new Color(0.86f, 0.9f, 0.82f, 1f);
+
+            [Tooltip("FEEL. Tier 3 tint (Wight: bone grey).")]
+            public Color tier3Tint = new Color(0.72f, 0.7f, 0.78f, 1f);
+
+            [Tooltip("FEEL. Armored tint (iron bands).")]
+            public Color armoredTint = new Color(0.55f, 0.6f, 0.7f, 1f);
+
+            [Tooltip("FEEL. Swift tint (speed trails).")]
+            public Color swiftTint = new Color(0.7f, 0.9f, 1f, 1f);
+
+            [Tooltip("FEEL. Burning tint (ember aura).")]
+            public Color burningTint = new Color(1f, 0.55f, 0.3f, 1f);
+
+            [Tooltip("FEEL. Shielded tint (bubble).")]
+            public Color shieldedTint = new Color(0.6f, 0.75f, 1f, 1f);
+
+            [Tooltip("FEEL. Splitter tint (crack lines).")]
+            public Color splitterTint = new Color(0.85f, 0.75f, 0.55f, 1f);
+
+            [Tooltip("FEEL. Regen tint (green pulse).")]
+            public Color regenTint = new Color(0.55f, 1f, 0.55f, 1f);
         }
 
         [Serializable]

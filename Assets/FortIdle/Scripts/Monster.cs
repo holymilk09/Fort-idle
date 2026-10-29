@@ -45,10 +45,20 @@ namespace FortIdle
         bool thoughtFlank;
         float baseScale = 1f;
         float artHeight;
+        AffixState affixState;
+        bool ticking;
 
         public float HealthFraction => !alive || maxHitPoints <= 0f ? 0f : hitPoints / maxHitPoints;
 
         public bool IsBoss => alive && kind == MonsterKind.Treant;
+
+        public int Tier => affixState.Tier < 1 ? 1 : affixState.Tier;
+
+        public EliteAffix Affix => affixState.Affix;
+
+        public bool IsSplitling => affixState.Splitling;
+
+        public float AffixScale => affixState.Scale <= 0f ? 1f : affixState.Scale;
 
         public void Init(MonsterKind monsterKind, int index, int count, float hpScale = 1f, float sizeScale = 1f)
         {
@@ -125,6 +135,24 @@ namespace FortIdle
             transform.localScale = Vector3.one * baseScale;
             if (kind == MonsterKind.Treant)
                 Debug.Log("FORTIDLE boss height=" + bodyHeight.ToString("0.00") + "m art=" + artHeight.ToString("0.00") + "m scale=" + baseScale.ToString("0.000"));
+            MonsterAffix.Reset(ref affixState);
+            MonsterAffix.Paint(ref affixState, transform, bar != null ? bar.transform : null);
+        }
+
+        // Elite / tier hook. Call right after Init. AffixScale multiplies the Init size.
+        public void Promote(int tier, EliteAffix affix, bool splitling)
+        {
+            MonsterAffix.Begin(ref affixState, tier, affix, splitling);
+            hitPoints *= MonsterAffix.HpMult(affix);
+            maxHitPoints = hitPoints;
+            moveSpeed *= MonsterAffix.SpeedMult(affix);
+            float grow = AffixScale;
+            bodyRadius *= grow;
+            bodyHeight *= grow;
+            separationRadius *= grow;
+            baseScale *= grow;
+            transform.localScale = Vector3.one * baseScale;
+            MonsterAffix.Paint(ref affixState, transform, bar != null ? bar.transform : null);
         }
 
         public float ScreenFraction(Camera view)
@@ -163,6 +191,8 @@ namespace FortIdle
         {
             if (!alive || dps <= 0f)
                 return;
+            if (MonsterAffix.BurnImmune(affixState))
+                return;
             if (dps > burnDps)
                 burnDps = dps;
             if (seconds > burnLeft)
@@ -179,6 +209,12 @@ namespace FortIdle
         {
             if (!alive)
                 return;
+            if (MonsterAffix.Absorb(ref affixState, ticking))
+            {
+                hitFlash = 1f;
+                return;
+            }
+
             hitPoints -= amount;
             hitFlash = 1f;
             WorldLabel.SpawnDamage(transform.position + Vector3.up * bodyHeight, amount);
@@ -190,6 +226,7 @@ namespace FortIdle
             hitFlash = 0f;
             deathOrigin = transform.position;
             DropLoot();
+            MonsterAffix.Split(affixState, deathOrigin, maxHitPoints, slot, slotCount);
         }
 
         void DropLoot()
@@ -333,10 +370,14 @@ namespace FortIdle
             if (burnLeft > 0f)
             {
                 burnLeft -= delta;
+                ticking = true;
                 TakeDamage(burnDps * delta);
+                ticking = false;
                 if (!alive)
                     return;
             }
+
+            hitPoints = MonsterAffix.Regen(ref affixState, hitPoints, maxHitPoints, delta);
 
             ApplySpikes(delta);
             if (!alive)
@@ -380,7 +421,9 @@ namespace FortIdle
                 float dps = FortWorld.Pads[i].SpikeDamage(kind, transform.position);
                 if (dps <= 0f)
                     continue;
+                ticking = true;
                 TakeDamage(dps * delta);
+                ticking = false;
                 if (!alive)
                     return;
             }

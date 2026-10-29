@@ -55,6 +55,8 @@ namespace FortIdle
             public float fireHp;
             public int night;
             public long savedTicks;
+            public int embersClaimed;
+            public float lifetimeThreat;
             public Site wall = new Site();
             public Site gate = new Site();
             public Site tower = new Site();
@@ -94,6 +96,13 @@ namespace FortIdle
             Restoring = true;
             FortWorld.Progress.ApplyBlob(blob);
             Restoring = false;
+            FortPrestige.Restore(blob);
+            if (blob.night < 1)
+            {
+                Debug.Log("FORTIDLE save=rebuild embers=" + blob.embersClaimed);
+                return;
+            }
+
             pending = blob;
             SavedTicks = blob.savedTicks;
             PendingNight = blob.night < 1 ? 1 : blob.night;
@@ -166,6 +175,19 @@ namespace FortIdle
             Write(PlayerKey);
         }
 
+        public static void WriteRebuild()
+        {
+            if (DemoSession() || FortWorld.Progress == null)
+                return;
+            Blob blob = new Blob();
+            blob.night = 0;
+            blob.research = FortWorld.Progress.ResearchRank;
+            blob.embersClaimed = FortPrestige.EmbersClaimed;
+            blob.lifetimeThreat = FortPrestige.LifetimeThreat;
+            PlayerPrefs.SetString(PlayerKey, JsonUtility.ToJson(blob));
+            PlayerPrefs.Save();
+        }
+
         public static void ProveRoundtrip()
         {
             Write(DemoKey);
@@ -233,6 +255,8 @@ namespace FortIdle
             blob.fireHp = FortWorld.Fire != null ? FortWorld.Fire.HitPoints : 0f;
             blob.night = FortWorld.Match != null ? FortWorld.Match.NightIndex : 1;
             blob.savedTicks = DateTime.UtcNow.Ticks;
+            blob.embersClaimed = FortPrestige.EmbersClaimed;
+            blob.lifetimeThreat = FortPrestige.LifetimeThreat;
             WritePad(blob.wall, FortWorld.Wall);
             WritePad(blob.gate, FortWorld.Gate);
             WritePad(blob.tower, FortWorld.Tower);

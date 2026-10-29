@@ -26,7 +26,7 @@ namespace FortIdle
                 float oil = 1f;
                 if (FortWorld.Progress != null)
                     oil += FortWorld.Progress.SapOil * FortWorld.Config.progression.sapOilBonus;
-                return damage * rate * rateScale * oil;
+                return damage * rate * rateScale * oil * FortPrestige.DpsMult();
             }
         }
 
@@ -186,7 +186,7 @@ namespace FortIdle
             float oil = 1f;
             if (FortWorld.Progress != null)
                 oil += FortWorld.Progress.SapOil * config.progression.sapOilBonus;
-            bolt.Init(direction, damage * oil, pierce, splash, burnDamage, burnSeconds);
+            bolt.Init(direction, damage * oil * FortPrestige.DpsMult(), pierce, splash, burnDamage, burnSeconds);
         }
     }
 }

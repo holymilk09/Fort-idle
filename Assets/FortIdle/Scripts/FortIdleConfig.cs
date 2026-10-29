@@ -41,6 +41,8 @@ namespace FortIdle
         public ProgressionTuning progression = new ProgressionTuning();
         public EliteTuning elites = new EliteTuning();
         public QualityTuning quality = new QualityTuning();
+        public EndlessTuning endless = new EndlessTuning();
+        public PrestigeTuning prestige = new PrestigeTuning();
 
         [Serializable]
         public class PlayerTuning
@@ -2132,6 +2134,86 @@ public float padRangeFactor = 0.62f;
                     return budget3;
                 return budget4;
             }
+        }
+
+        [Serializable]
+        public class EndlessTuning
+        {
+            [Tooltip("SPEC. Keep playing past wave.nightCount instead of resolving the run. Demo sessions still stop at nightCount.")]
+            public bool enabled = true;
+
+            [Tooltip("SPEC. Last authored night (maps 1–5 × 5). Later nights use the endless curve.")]
+            public int authoredNights = 25;
+
+            [Tooltip("SPEC. Endless threat growth per night past authoredNights.")]
+            public float endlessGrowth = 1.1f;
+
+            [Tooltip("SPEC. Blood Moon every this many endless nights (first one is authoredNights + this). 0 turns it off.")]
+            public int bloodMoonEvery = 10;
+
+            [Tooltip("SPEC. Blood Moon threat multiplier.")]
+            public float bloodMoonMult = 1.5f;
+
+            [Tooltip("SPEC. Blood Moon coin multiplier.")]
+            public float bloodMoonLoot = 2f;
+
+            [Tooltip("SPEC. Threat multiplier on the rest night after a Blood Moon.")]
+            public float restMult = 0.7f;
+
+            [Tooltip("SPEC. Expected power divisor on a Blood Moon.")]
+            public float targetBlood = 1f;
+
+            [Tooltip("SPEC. Expected power divisor on a rest night.")]
+            public float targetRest = 0.55f;
+
+            [Tooltip("ESTIMATE. Fort carries over between maps while only map 1 exists, so a new map's opener is at least this share of the last boss budget. Lifts nights 6–7 from ratio ~0.3 to ~0.55–0.65 (Tools/sim/threat_sim.py). 0 restores the map sawtooth for maps that rebuild the fort.")]
+            public float carryFloor = 0.65f;
+
+            [Tooltip("ESTIMATE. Carry floor growth per night inside a map.")]
+            public float carryStep = 1.25f;
+
+            [Tooltip("SPEC. First night of endless cash decay.")]
+            public int decayStart = 41;
+
+            [Tooltip("SPEC. Nights per cash-decay band.")]
+            public int decaySpan = 10;
+
+            [Tooltip("SPEC. Kill coins in the first decay band (nights 41–50).")]
+            public float decayFirst = 0.5f;
+
+            [Tooltip("SPEC. Kill coins in the second decay band (nights 51–60).")]
+            public float decaySecond = 0.25f;
+
+            [Tooltip("SPEC. Kill coins from the third band on (night 61+).")]
+            public float decayLast = 0.1f;
+        }
+
+        [Serializable]
+        public class PrestigeTuning
+        {
+            [Tooltip("SPEC. Embers_total = floor(emberK × sqrt(lifetime threat cleared / emberDiv)).")]
+            public float emberK = 10f;
+
+            [Tooltip("SPEC. Lifetime threat divisor in the Ember formula.")]
+            public float emberDiv = 10000f;
+
+            [Tooltip("SPEC. DPS bonus per claimed Ember.")]
+            public float emberDps = 0.03f;
+
+            [Tooltip("SPEC. Income bonus per claimed Ember.")]
+            public float emberIncome = 0.03f;
+
+            [Tooltip("SPEC. Same-family soft cap: eff = raw / (1 + raw / cap). 3 = 300%. 0 turns it off.")]
+            public float softCap = 3f;
+
+            [Tooltip("SPEC. Losses on one night before Rebuild is pushed.")]
+            public int offerLosses = 3;
+
+            [Tooltip("ESTIMATE. Rebuild on demand only from this night, so the FTUE never shows it.")]
+            public int demandNight = 10;
+
+            [Tooltip("LAYOUT. Rebuild button caption; the Ember gain follows it.")]
+            public string buttonLabel = "REBUILD +";
         }
     }
 }

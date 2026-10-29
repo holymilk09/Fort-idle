@@ -77,6 +77,7 @@ namespace FortIdle
                     + " threat=" + Mathf.RoundToInt(Plan.Threat)
                     + " band=" + Plan.Band.ToString("0.00")
                     + " ratio=" + Plan.Ratio.ToString("0.00")
+                    + " kind=" + ThreatMath.KindOf(Plan.Night)
                     + " shamblers=" + Plan.Shamblers
                     + " brutes=" + Plan.Brutes
                     + " bosses=" + Plan.Bosses
@@ -119,12 +120,16 @@ namespace FortIdle
             if (Phase == MatchPhase.Night && SpawnFinished && LivingMonsters == 0)
             {
                 LogNight(true);
+                FortPrestige.NoteCleared(Plan != null ? Plan.Threat : 0f);
                 LossStreak = 0;
                 tries = 0;
-                if (NightIndex >= FortWorld.Config.wave.nightCount)
+                if (NightIndex >= FortWorld.Config.wave.nightCount && !FortPrestige.EndlessOn())
                     Resolve(true);
                 else
+                {
                     BeginNextDay();
+                    FortSave.WritePlayer();
+                }
             }
         }
 

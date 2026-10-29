@@ -43,6 +43,8 @@ namespace FortIdle
         int thinkTick;
         BuildPad thought;
         bool thoughtFlank;
+        float baseScale = 1f;
+        float artHeight;
 
         public float HealthFraction => !alive || maxHitPoints <= 0f ? 0f : hitPoints / maxHitPoints;
 
@@ -91,17 +93,70 @@ namespace FortIdle
             hitFlash = 0f;
             attackTimer = 0f;
             maxHitPoints = hitPoints;
-            if (!dressed || dressedKind != kind)
+            transform.localScale = Vector3.one;
+            bool fresh = !dressed || dressedKind != kind;
+            if (fresh)
             {
                 dressed = true;
                 dressedKind = kind;
                 BuildBody();
-                bar = HpBar.Create(transform, bodyHeight + 0.35f, kind == MonsterKind.Treant ? 1.8f : 0.8f);
-                bar.Read = () => HealthFraction;
+                artHeight = RenderHeight();
             }
 
             float scale = sizeScale < 1f ? 1f : sizeScale;
-            transform.localScale = Vector3.one * scale;
+            float fit = scale;
+            float bossHeight = tuning.bossHeight;
+            if (kind == MonsterKind.Treant && bossHeight > 0f && artHeight > 0.01f && bodyHeight > 0.01f)
+            {
+                scale = bossHeight / artHeight;
+                fit = bossHeight / bodyHeight;
+            }
+
+            if (fresh)
+            {
+                bar = HpBar.Create(transform, bodyHeight * fit / scale + 0.35f, kind == MonsterKind.Treant ? 1.8f : 0.8f);
+                bar.Read = () => HealthFraction;
+            }
+
+            bodyRadius *= fit;
+            bodyHeight *= fit;
+            separationRadius *= fit;
+            baseScale = scale;
+            transform.localScale = Vector3.one * baseScale;
+            if (kind == MonsterKind.Treant)
+                Debug.Log("FORTIDLE boss height=" + bodyHeight.ToString("0.00") + "m art=" + artHeight.ToString("0.00") + "m scale=" + baseScale.ToString("0.000"));
+        }
+
+        public float ScreenFraction(Camera view)
+        {
+            if (view == null)
+                return 0f;
+            Vector3 bottom = view.WorldToViewportPoint(transform.position);
+            Vector3 top = view.WorldToViewportPoint(transform.position + Vector3.up * bodyHeight);
+            if (bottom.z <= 0f || top.z <= 0f)
+                return 0f;
+            return Mathf.Abs(top.y - bottom.y);
+        }
+
+        float RenderHeight()
+        {
+            Renderer[] renderers = GetComponentsInChildren<Renderer>();
+            bool any = false;
+            Bounds bounds = new Bounds(transform.position, Vector3.zero);
+            for (int i = 0; i < renderers.Length; i++)
+            {
+                if (!any)
+                {
+                    bounds = renderers[i].bounds;
+                    any = true;
+                }
+                else
+                {
+                    bounds.Encapsulate(renderers[i].bounds);
+                }
+            }
+
+            return any ? bounds.size.y : 0f;
         }
 
         public void Burn(float dps, float seconds)
@@ -268,7 +323,7 @@ namespace FortIdle
                 float span = config.monsters.deathDuration <= 0f ? 1f : config.monsters.deathDuration;
                 float u = Mathf.Clamp01(deathAge / span);
                 transform.position = deathOrigin + Vector3.down * (config.monsters.deathSinkDistance * u);
-                float scale = 1f - u;
+                float scale = baseScale * (1f - u);
                 transform.localScale = new Vector3(scale, scale, scale);
                 if (u >= 1f)
                     gameObject.SetActive(false);
@@ -384,8 +439,9 @@ namespace FortIdle
         {
             if (hitFlash <= 0f)
             {
-                if (transform.localScale != Vector3.one)
-                    transform.localScale = Vector3.one;
+                Vector3 rest = new Vector3(baseScale, baseScale, baseScale);
+                if (transform.localScale != rest)
+                    transform.localScale = rest;
                 return;
             }
 
@@ -395,7 +451,8 @@ namespace FortIdle
             hitFlash -= delta / duration;
             if (hitFlash < 0f)
                 hitFlash = 0f;
-            float punch = 1f + hitFlash * FortWorld.Config.monsters.hitFlashScale;
+            float kick = kind == MonsterKind.Treant ? FortWorld.Config.monsters.bossHitFlashScale : FortWorld.Config.monsters.hitFlashScale;
+            float punch = baseScale * (1f + hitFlash * kick);
             transform.localScale = new Vector3(punch, punch, punch);
         }
 

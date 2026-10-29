@@ -19,6 +19,21 @@ namespace FortIdle
             return false;
         }
 
+        // -shotdir <path> picks the output folder; otherwise the player's persistent data folder.
+        static string ShotDir()
+        {
+            string dir = Application.persistentDataPath;
+            string[] args = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < args.Length - 1; i++)
+            {
+                if (args[i] == "-shotdir" && !string.IsNullOrEmpty(args[i + 1]))
+                    dir = args[i + 1];
+            }
+
+            Directory.CreateDirectory(dir);
+            return dir;
+        }
+
         void Awake()
         {
             if (FortWorld.Match != null)
@@ -28,6 +43,8 @@ namespace FortIdle
 
         IEnumerator Start()
         {
+            string dir = ShotDir();
+            Debug.Log("FORTIDLE poseshot dir=" + dir);
             yield return new WaitForSeconds(1.25f);
             if (FortWorld.Hero != null)
             {
@@ -37,7 +54,7 @@ namespace FortIdle
             yield return new WaitForSeconds(0.8f);
             yield return new WaitForEndOfFrame();
             Texture2D screen = ScreenCapture.CaptureScreenshotAsTexture();
-            File.WriteAllBytes("/opt/cursor/artifacts/hero-idle-n1.png", screen.EncodeToPNG());
+            File.WriteAllBytes(Path.Combine(dir, "hero-idle-n1.png"), screen.EncodeToPNG());
             Destroy(screen);
             Debug.Log("FORTIDLE poseshot=idle");
             if (FortWorld.Hero != null)
@@ -75,7 +92,7 @@ namespace FortIdle
                 Texture2D shot = new Texture2D(1280, 720, TextureFormat.RGB24, false);
                 shot.ReadPixels(new Rect(0f, 0f, 1280f, 720f), 0, 0);
                 shot.Apply();
-                File.WriteAllBytes("/opt/cursor/artifacts/hero-idle-close.png", shot.EncodeToPNG());
+                File.WriteAllBytes(Path.Combine(dir, "hero-idle-close.png"), shot.EncodeToPNG());
                 RenderTexture.active = null;
                 Destroy(shot);
                 Destroy(rt);
@@ -93,8 +110,8 @@ namespace FortIdle
             FortWorld.Monsters.Add(boss);
             yield return new WaitForSeconds(4.2f);
             yield return new WaitForEndOfFrame();
-            ScreenCapture.CaptureScreenshot("/opt/cursor/artifacts/boss-bar-n5.png");
-            Debug.Log("FORTIDLE poseshot=boss");
+            ScreenCapture.CaptureScreenshot(Path.Combine(dir, "boss-bar-n5.png"));
+            Debug.Log("FORTIDLE poseshot=boss frame=" + boss.ScreenFraction(FortWorld.Camera).ToString("0.00"));
             yield return new WaitForSeconds(0.4f);
             Application.Quit();
         }

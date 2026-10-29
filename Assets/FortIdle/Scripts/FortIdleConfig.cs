@@ -512,6 +512,12 @@ public float minMoveDistance = 0.001f;
             [Tooltip("FEEL. Extra scale at the start of a hit flash.")]
             public float hitFlashScale = 0.18f;
 
+            [Tooltip("FEEL. Extra scale at the start of a hit flash on the boss. Smaller than hitFlashScale so a big body does not jolt.")]
+            public float bossHitFlashScale = 0.06f;
+
+            [Tooltip("LAYOUT. Boss (Treant) world height, meters, measured from its render bounds after the art is built. Any art is scaled to this; night size scaling never takes it higher. 3.6 with bossCamPullback 0.2 keeps the boss at about 35% of frame height. 0 keeps the art's own height.")]
+            public float bossHeight = 3.6f;
+
             [Tooltip("ESTIMATE. Bodies that can bite the wall at once. About how many shamblers fit across the wall face. The rest wait a rank back. 0 means no cap.")]
             public int maxWallAttackers = 8;
 
@@ -801,6 +807,15 @@ public float farClip = 180f;
 
             [Tooltip("LAYOUT. Look height on the locked gate during the tease.")]
             public float teaseLookHeight = 1.6f;
+
+            [Tooltip("FEEL. Extra follow distance while a live boss is near the hero, as a fraction of distance. 0.2 is 20% farther.")]
+            public float bossCamPullback = 0.2f;
+
+            [Tooltip("LAYOUT. Horizontal meters from the hero within which a live boss triggers the pullback.")]
+            public float bossCamRange = 12f;
+
+            [Tooltip("FEEL. Seconds to blend the boss pullback in or out.")]
+            public float bossCamBlendTime = 0.6f;
         }
 
         [Serializable]

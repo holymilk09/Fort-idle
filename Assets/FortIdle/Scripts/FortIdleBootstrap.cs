@@ -71,6 +71,7 @@ namespace FortIdle
             MatchDirector match = gameObject.AddComponent<MatchDirector>();
             match.Init(sun, camera);
             FortWorld.Match = match;
+            gameObject.AddComponent<OfflineEarnings>();
             if (FrameMeter.Wanted())
                 gameObject.AddComponent<FrameMeter>();
             if (StageShowcase.Requested())

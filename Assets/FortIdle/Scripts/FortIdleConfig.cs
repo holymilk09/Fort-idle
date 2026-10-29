@@ -32,6 +32,7 @@ namespace FortIdle
         public LootTuning loot = new LootTuning();
         public UpgradeTuning upgrades = new UpgradeTuning();
         public WorkerTuning workers = new WorkerTuning();
+        public OfflineTuning offline = new OfflineTuning();
         public DemoTuning demo = new DemoTuning();
         public DefenseTuning defenses = new DefenseTuning();
         public SupplyTuning supplies = new SupplyTuning();
@@ -1076,6 +1077,14 @@ public float controlsPanelHeight = 50f;
             public string hintUpgradeSpeed = "Stand on the purple pad — move faster";
             public string hintHire = "Stand on the gold pad to hire a worker";
             public string hintWorkers = "Workers chop and haul on their own.";
+            public string offlineTitle = "WELCOME BACK";
+            public string offlineCoins = "coins";
+            public string offlinePlanks = "planks";
+            public string offlineAway = "away for";
+            public string offlineHours = "h";
+            public string offlineMinutes = "m";
+            public string offlineCollect = "COLLECT";
+            public string offlineTriple = "×3 (ad)";
             public string stoneLabel = "STONE";
             public string ironLabel = "IRON";
             public string spikeName = "SPIKE";
@@ -1273,6 +1282,73 @@ public float controlsPanelHeight = 50f;
 
             [Tooltip("FEEL. Separation push, meters per second.")]
             public float separationStrength = 1.2f;
+        }
+
+        [Serializable]
+        public class OfflineTuning
+        {
+            [Tooltip("GDD. Workers keep producing while the app is closed.")]
+            public bool enabled = true;
+
+            [Tooltip("ESTIMATE. Offline coins per hired worker per second. 0.03 is ~108 coins/hour per worker; 4 workers for 2 h is ~864.")]
+            public float coinsPerWorkerSecond = 0.03f;
+
+            [Tooltip("ESTIMATE. Offline planks per hired worker per second, banked to the stockpile. 0.01 is 36/hour per worker.")]
+            public float planksPerWorkerSecond = 0.01f;
+
+            [Tooltip("ESTIMATE. Most planks banked in one return. Matches stack.maxRenderedPlanks.")]
+            public int maxPlanks = 60;
+
+            [Tooltip("GDD. Offline cap, seconds. 2 h now; research can raise it to 8 h (28800).")]
+            public float capSeconds = 7200f;
+
+            [Tooltip("ESTIMATE. Shortest absence, seconds, that earns anything or shows the popup.")]
+            public float minAwaySeconds = 60f;
+
+            [Tooltip("ESTIMATE. Worker count assumed for -offline QA runs when fewer are hired.")]
+            public int qaMinWorkers = 2;
+
+            [Tooltip("GDD. Shows the ×3 rewarded-video button. Off until an ad SDK exists; it collects ×1 for now.")]
+            public bool showAdButton = false;
+
+            [Tooltip("LAYOUT. Popup canvas sorting order, above the HUD (10).")]
+            public int sortingOrder = 40;
+
+            [Tooltip("LAYOUT. Popup panel size, reference pixels.")]
+            public Vector2 panelSize = new Vector2(760f, 520f);
+
+            [Tooltip("LAYOUT. Button size, reference pixels.")]
+            public Vector2 buttonSize = new Vector2(280f, 84f);
+
+            [Tooltip("LAYOUT. Gap between the two buttons, reference pixels.")]
+            public float buttonGap = 40f;
+
+            [Tooltip("LAYOUT. Button centre height above the panel bottom, reference pixels.")]
+            public float buttonLift = 70f;
+
+            [Tooltip("LAYOUT.")]
+            public int titleFontSize = 60;
+
+            [Tooltip("LAYOUT.")]
+            public int bodyFontSize = 40;
+
+            [Tooltip("LAYOUT.")]
+            public int awayFontSize = 28;
+
+            [Tooltip("LAYOUT.")]
+            public int buttonFontSize = 30;
+
+            [Tooltip("FEEL. Full-screen dim behind the popup; also blocks taps until COLLECT.")]
+            public Color dimColor = new Color(0f, 0f, 0f, 0.6f);
+
+            [Tooltip("FEEL.")]
+            public Color panelColor = new Color(0.16f, 0.12f, 0.09f, 0.96f);
+
+            [Tooltip("FEEL.")]
+            public Color buttonColor = new Color(0.86f, 0.62f, 0.16f, 1f);
+
+            [Tooltip("FEEL.")]
+            public Color adButtonColor = new Color(0.24f, 0.5f, 0.28f, 1f);
         }
 
         [Serializable]

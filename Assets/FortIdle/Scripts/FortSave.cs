@@ -10,6 +10,7 @@ namespace FortIdle
 
         public static bool Restoring;
         public static int PendingNight;
+        public static long SavedTicks;
         static Blob pending;
 
         [Serializable]
@@ -53,6 +54,7 @@ namespace FortIdle
             public float turretHp;
             public float fireHp;
             public int night;
+            public long savedTicks;
             public Site wall = new Site();
             public Site gate = new Site();
             public Site tower = new Site();
@@ -82,6 +84,7 @@ namespace FortIdle
         public static void LoadIntoWorld()
         {
             PendingNight = 0;
+            SavedTicks = 0;
             pending = null;
             if (DemoSession() || HasFlag("-elements") || StageShowcase.Requested() || LookReel.Requested() || PerfHarness.Requested() || TreeShots.Requested() || QaShot.Requested() || PoseShot.Requested())
                 return;
@@ -92,6 +95,7 @@ namespace FortIdle
             FortWorld.Progress.ApplyBlob(blob);
             Restoring = false;
             pending = blob;
+            SavedTicks = blob.savedTicks;
             PendingNight = blob.night < 1 ? 1 : blob.night;
             Debug.Log("FORTIDLE save=loaded night=" + PendingNight + " coins=" + blob.coins);
         }
@@ -228,6 +232,7 @@ namespace FortIdle
             blob.turretHp = FortWorld.TurretPad != null ? FortWorld.TurretPad.HitPoints : 0f;
             blob.fireHp = FortWorld.Fire != null ? FortWorld.Fire.HitPoints : 0f;
             blob.night = FortWorld.Match != null ? FortWorld.Match.NightIndex : 1;
+            blob.savedTicks = DateTime.UtcNow.Ticks;
             WritePad(blob.wall, FortWorld.Wall);
             WritePad(blob.gate, FortWorld.Gate);
             WritePad(blob.tower, FortWorld.Tower);

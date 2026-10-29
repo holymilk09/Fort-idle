@@ -10,6 +10,7 @@ namespace FortIdle
 
         public static bool Restoring;
         public static int PendingNight;
+        public static long SavedTicks;
         static Blob pending;
 
         [Serializable]
@@ -53,6 +54,9 @@ namespace FortIdle
             public float turretHp;
             public float fireHp;
             public int night;
+            public long savedTicks;
+            public int embersClaimed;
+            public float lifetimeThreat;
             public Site wall = new Site();
             public Site gate = new Site();
             public Site tower = new Site();
@@ -82,8 +86,9 @@ namespace FortIdle
         public static void LoadIntoWorld()
         {
             PendingNight = 0;
+            SavedTicks = 0;
             pending = null;
-            if (DemoSession() || HasFlag("-elements") || StageShowcase.Requested() || LookReel.Requested() || PerfHarness.Requested() || TreeShots.Requested() || QaShot.Requested() || PoseShot.Requested())
+            if (Harness())
                 return;
             Blob blob = Read(PlayerKey);
             if (blob == null || FortWorld.Progress == null)
@@ -91,7 +96,15 @@ namespace FortIdle
             Restoring = true;
             FortWorld.Progress.ApplyBlob(blob);
             Restoring = false;
+            FortPrestige.Restore(blob);
+            if (blob.night < 1)
+            {
+                Debug.Log("FORTIDLE save=rebuild embers=" + blob.embersClaimed);
+                return;
+            }
+
             pending = blob;
+            SavedTicks = blob.savedTicks;
             PendingNight = blob.night < 1 ? 1 : blob.night;
             Debug.Log("FORTIDLE save=loaded night=" + PendingNight + " coins=" + blob.coins);
         }
@@ -155,11 +168,30 @@ namespace FortIdle
             pending = null;
         }
 
+        // Demo and QA harness runs neither load nor write the player's save.
+        static bool Harness()
+        {
+            return DemoSession() || HasFlag("-elements") || StageShowcase.Requested() || LookReel.Requested() || PerfHarness.Requested() || TreeShots.Requested() || QaShot.Requested() || PoseShot.Requested();
+        }
+
         public static void WritePlayer()
         {
-            if (Restoring || DemoSession() || FortWorld.Progress == null)
+            if (Restoring || Harness() || FortWorld.Progress == null)
                 return;
             Write(PlayerKey);
+        }
+
+        public static void WriteRebuild()
+        {
+            if (Harness() || FortWorld.Progress == null)
+                return;
+            Blob blob = new Blob();
+            blob.night = 0;
+            blob.research = FortWorld.Progress.ResearchRank;
+            blob.embersClaimed = FortPrestige.EmbersClaimed;
+            blob.lifetimeThreat = FortPrestige.LifetimeThreat;
+            PlayerPrefs.SetString(PlayerKey, JsonUtility.ToJson(blob));
+            PlayerPrefs.Save();
         }
 
         public static void ProveRoundtrip()
@@ -228,6 +260,9 @@ namespace FortIdle
             blob.turretHp = FortWorld.TurretPad != null ? FortWorld.TurretPad.HitPoints : 0f;
             blob.fireHp = FortWorld.Fire != null ? FortWorld.Fire.HitPoints : 0f;
             blob.night = FortWorld.Match != null ? FortWorld.Match.NightIndex : 1;
+            blob.savedTicks = DateTime.UtcNow.Ticks;
+            blob.embersClaimed = FortPrestige.EmbersClaimed;
+            blob.lifetimeThreat = FortPrestige.LifetimeThreat;
             WritePad(blob.wall, FortWorld.Wall);
             WritePad(blob.gate, FortWorld.Gate);
             WritePad(blob.tower, FortWorld.Tower);

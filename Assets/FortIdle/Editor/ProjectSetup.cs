@@ -69,13 +69,25 @@ namespace FortIdle.Editor
         public static void BuildLinux()
         {
             Setup();
-            string output = Path.Combine(Directory.GetCurrentDirectory(), "Builds", "Linux", "FortIdle.x86_64");
+            Build(Path.Combine("Builds", "Linux", "FortIdle.x86_64"), BuildTarget.StandaloneLinux64);
+        }
+
+        // Builds the committed Map1 scene as-is (no Setup), so a QA build leaves the scene file untouched.
+        [MenuItem("Fort Idle/Build Mac Player")]
+        public static void BuildMac()
+        {
+            Build(Path.Combine("Builds", "Mac", "FortIdle.app"), BuildTarget.StandaloneOSX);
+        }
+
+        static void Build(string relativeOutput, BuildTarget target)
+        {
+            string output = Path.Combine(Directory.GetCurrentDirectory(), relativeOutput);
             Directory.CreateDirectory(Path.GetDirectoryName(output));
             BuildPlayerOptions options = new BuildPlayerOptions
             {
                 scenes = new[] { ScenePath },
                 locationPathName = output,
-                target = BuildTarget.StandaloneLinux64,
+                target = target,
                 options = BuildOptions.None
             };
 

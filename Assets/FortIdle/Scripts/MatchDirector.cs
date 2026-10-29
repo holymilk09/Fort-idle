@@ -26,6 +26,7 @@ namespace FortIdle
 
         int tries;
         int duskCoins;
+        int elites;
 
         Light sun;
         Camera view;
@@ -76,11 +77,15 @@ namespace FortIdle
                     + " threat=" + Mathf.RoundToInt(Plan.Threat)
                     + " band=" + Plan.Band.ToString("0.00")
                     + " ratio=" + Plan.Ratio.ToString("0.00")
+                    + " kind=" + ThreatMath.KindOf(Plan.Night)
                     + " shamblers=" + Plan.Shamblers
                     + " brutes=" + Plan.Brutes
                     + " bosses=" + Plan.Bosses
                     + " bossHp=" + Mathf.RoundToInt(Plan.BossHp)
-                    + " hpx=" + (FortWorld.Config.monsters.hitPoints <= 0f ? 1f : Plan.ShamblerHp / FortWorld.Config.monsters.hitPoints).ToString("0.00"));
+                    + " hpx=" + (FortWorld.Config.monsters.hitPoints <= 0f ? 1f : Plan.ShamblerHp / FortWorld.Config.monsters.hitPoints).ToString("0.00")
+                    + " tier=" + Plan.Tier
+                    + " bruteTier=" + Plan.BruteTier
+                    + " elite=" + Plan.EliteChance.ToString("0.00"));
                 StartCoroutine(SpawnWave());
                 Debug.Log("FORTIDLE phase=Night night=" + NightIndex);
             }
@@ -115,12 +120,16 @@ namespace FortIdle
             if (Phase == MatchPhase.Night && SpawnFinished && LivingMonsters == 0)
             {
                 LogNight(true);
+                FortPrestige.NoteCleared(Plan != null ? Plan.Threat : 0f);
                 LossStreak = 0;
                 tries = 0;
-                if (NightIndex >= FortWorld.Config.wave.nightCount)
+                if (NightIndex >= FortWorld.Config.wave.nightCount && !FortPrestige.EndlessOn())
                     Resolve(true);
                 else
+                {
                     BeginNextDay();
+                    FortSave.WritePlayer();
+                }
             }
         }
 
@@ -323,6 +332,7 @@ namespace FortIdle
             if (total < 1)
                 total = 1;
             int index = 0;
+            elites = 0;
             yield return SpawnKind(MonsterKind.Shambler, shamblers, total, index);
             index += shamblers;
             yield return SpawnKind(MonsterKind.Brute, brutes, total, index);
@@ -332,7 +342,8 @@ namespace FortIdle
             Debug.Log("FORTIDLE spawn=done night=" + NightIndex
                 + " shamblers=" + shamblers
                 + " brutes=" + brutes
-                + " treants=" + treants);
+                + " treants=" + treants
+                + " elites=" + elites);
         }
 
         IEnumerator SpawnKind(MonsterKind kind, int count, int total, int index)
@@ -366,6 +377,16 @@ namespace FortIdle
                 }
 
                 monster.Init(kind, slot, total, hpScale, size);
+                if (Plan != null && kind != MonsterKind.Treant)
+                {
+                    EliteAffix affix = MonsterAffix.Roll(Plan.EliteChance);
+                    int tier = kind == MonsterKind.Brute ? Plan.BruteTier : Plan.Tier;
+                    if (affix != EliteAffix.None)
+                        elites += 1;
+                    if (tier > 1 || affix != EliteAffix.None)
+                        monster.Promote(tier, affix, false);
+                }
+
                 FortWorld.Monsters.Add(monster);
                 if (!logged)
                 {

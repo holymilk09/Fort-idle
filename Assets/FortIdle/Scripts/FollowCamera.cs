@@ -28,6 +28,12 @@ namespace FortIdle
         Vector3 nudge;
         float nudgeLeft;
         float nudgeDuration;
+        float pullback;
+        float pullbackVelocity;
+        Monster bossNear;
+        float bossPeak;
+        float peakPullback;
+        float peakDistance;
 
         public bool Teasing => mode != Mode.Follow;
 
@@ -118,7 +124,8 @@ namespace FortIdle
         void Follow()
         {
             FortIdleConfig.CameraTuning tuning = FortWorld.Config.cameraRig;
-            Vector3 want = target.position + Offset(tuning);
+            UpdatePullback(tuning);
+            Vector3 want = target.position + Offset(tuning) * (1f + pullback);
             Vector3 look = target.position + Vector3.up * tuning.lookHeight;
             if (!snapped || tuning.followSmoothTime <= 0f)
             {
@@ -136,6 +143,67 @@ namespace FortIdle
 
             transform.LookAt(lookPoint);
             ApplyNudge();
+            WatchBoss();
+        }
+
+        void UpdatePullback(FortIdleConfig.CameraTuning tuning)
+        {
+            Monster boss = NearBoss(tuning.bossCamRange);
+            if (boss != bossNear)
+            {
+                if (bossNear != null)
+                    Debug.Log("FORTIDLE boss-frame peak=" + bossPeak.ToString("0.00") + " pullback=" + pullback.ToString("0.00")
+                        + " atPullback=" + peakPullback.ToString("0.00") + " atDistance=" + peakDistance.ToString("0.0"));
+                bossNear = boss;
+                bossPeak = 0f;
+                if (boss != null)
+                    Debug.Log("FORTIDLE boss-cam=near");
+            }
+
+            float goal = boss != null && tuning.bossCamPullback > 0f ? tuning.bossCamPullback : 0f;
+            if (!snapped || tuning.bossCamBlendTime <= 0f)
+            {
+                pullback = goal;
+                pullbackVelocity = 0f;
+                return;
+            }
+
+            pullback = Mathf.SmoothDamp(pullback, goal, ref pullbackVelocity, tuning.bossCamBlendTime);
+        }
+
+        Monster NearBoss(float range)
+        {
+            if (range <= 0f)
+                return null;
+            Monster best = null;
+            float bestDistance = range;
+            for (int i = 0; i < FortWorld.Monsters.Count; i++)
+            {
+                Monster monster = FortWorld.Monsters[i];
+                if (monster == null || !monster.IsBoss)
+                    continue;
+                float distance = FortMath.HorizontalDistance(monster.transform.position, target.position);
+                if (distance <= bestDistance)
+                {
+                    bestDistance = distance;
+                    best = monster;
+                }
+            }
+
+            return best;
+        }
+
+        void WatchBoss()
+        {
+            if (bossNear == null)
+                return;
+            float fraction = bossNear.ScreenFraction(FortWorld.Camera);
+            if (fraction > bossPeak)
+            {
+                bossPeak = fraction;
+                peakPullback = pullback;
+                peakDistance = Vector3.Distance(transform.position, bossNear.transform.position);
+            }
         }
 
         void ApplyNudge()
@@ -170,7 +238,7 @@ namespace FortIdle
             }
             else
             {
-                Vector3 backPos = target.position + Offset(tuning);
+                Vector3 backPos = target.position + Offset(tuning) * (1f + pullback);
                 Vector3 backLook = target.position + Vector3.up * tuning.lookHeight;
                 transform.position = Vector3.Lerp(toPos, backPos, smooth);
                 lookPoint = Vector3.Lerp(toLook, backLook, smooth);

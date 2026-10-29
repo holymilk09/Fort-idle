@@ -1,4 +1,5 @@
 using System.Collections;
+using System.IO;
 using UnityEngine;
 
 namespace FortIdle
@@ -34,7 +35,7 @@ namespace FortIdle
                 rig.Frame(FortWorld.Hero.position, 1f, 0f);
             yield return new WaitForSeconds(0.8f);
             yield return new WaitForEndOfFrame();
-            ScreenCapture.CaptureScreenshot("/opt/cursor/artifacts/hud-controls-clear.png");
+            ScreenCapture.CaptureScreenshot(Path.Combine(PoseShot.ShotDir(), "hud-controls-clear.png"));
             Debug.Log("FORTIDLE qashot=hud");
 
             Restore(FortWorld.Wall);
@@ -57,7 +58,7 @@ namespace FortIdle
                 rig.Frame(FortWorld.Wall.transform.position + new Vector3(0f, 0f, 2.4f), 1.55f, 0f);
             yield return new WaitForSeconds(0.8f);
             yield return new WaitForEndOfFrame();
-            ScreenCapture.CaptureScreenshot("/opt/cursor/artifacts/night5-midfight.png");
+            ScreenCapture.CaptureScreenshot(Path.Combine(PoseShot.ShotDir(), "night5-midfight.png"));
             Debug.Log("FORTIDLE qashot=fight horde=" + (FortWorld.Match != null ? FortWorld.Match.LivingMonsters : 0));
             TriReport.Log("fight");
 

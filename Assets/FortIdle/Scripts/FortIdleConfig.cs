@@ -32,13 +32,17 @@ namespace FortIdle
         public LootTuning loot = new LootTuning();
         public UpgradeTuning upgrades = new UpgradeTuning();
         public WorkerTuning workers = new WorkerTuning();
+        public OfflineTuning offline = new OfflineTuning();
         public DemoTuning demo = new DemoTuning();
         public DefenseTuning defenses = new DefenseTuning();
         public SupplyTuning supplies = new SupplyTuning();
         public HeroCombatTuning heroCombat = new HeroCombatTuning();
         public DropTuning drops = new DropTuning();
         public ProgressionTuning progression = new ProgressionTuning();
+        public EliteTuning elites = new EliteTuning();
         public QualityTuning quality = new QualityTuning();
+        public EndlessTuning endless = new EndlessTuning();
+        public PrestigeTuning prestige = new PrestigeTuning();
 
         [Serializable]
         public class PlayerTuning
@@ -512,6 +516,12 @@ public float minMoveDistance = 0.001f;
             [Tooltip("FEEL. Extra scale at the start of a hit flash.")]
             public float hitFlashScale = 0.18f;
 
+            [Tooltip("FEEL. Extra scale at the start of a hit flash on the boss. Smaller than hitFlashScale so a big body does not jolt.")]
+            public float bossHitFlashScale = 0.06f;
+
+            [Tooltip("LAYOUT. Boss (Treant) world height, meters, measured from its render bounds after the art is built. Any art is scaled to this; night size scaling never takes it higher. 3.4 with bossCamPullback 0.2 keeps the boss at about 34% of frame height; 3.6 peaked at 0.36 on night 5 in Play Mode. 0 keeps the art's own height.")]
+            public float bossHeight = 3.4f;
+
             [Tooltip("ESTIMATE. Bodies that can bite the wall at once. About how many shamblers fit across the wall face. The rest wait a rank back. 0 means no cap.")]
             public int maxWallAttackers = 8;
 
@@ -801,6 +811,15 @@ public float farClip = 180f;
 
             [Tooltip("LAYOUT. Look height on the locked gate during the tease.")]
             public float teaseLookHeight = 1.6f;
+
+            [Tooltip("FEEL. Extra follow distance while a live boss is near the hero, as a fraction of distance. 0.2 is 20% farther.")]
+            public float bossCamPullback = 0.2f;
+
+            [Tooltip("LAYOUT. Horizontal meters from the hero within which a live boss triggers the pullback.")]
+            public float bossCamRange = 12f;
+
+            [Tooltip("FEEL. Seconds to blend the boss pullback in or out.")]
+            public float bossCamBlendTime = 0.6f;
         }
 
         [Serializable]
@@ -1061,6 +1080,14 @@ public float controlsPanelHeight = 50f;
             public string hintUpgradeSpeed = "Stand on the purple pad — move faster";
             public string hintHire = "Stand on the gold pad to hire a worker";
             public string hintWorkers = "Workers chop and haul on their own.";
+            public string offlineTitle = "WELCOME BACK";
+            public string offlineCoins = "coins";
+            public string offlinePlanks = "planks";
+            public string offlineAway = "away for";
+            public string offlineHours = "h";
+            public string offlineMinutes = "m";
+            public string offlineCollect = "COLLECT";
+            public string offlineTriple = "×3 (ad)";
             public string stoneLabel = "STONE";
             public string ironLabel = "IRON";
             public string spikeName = "SPIKE";
@@ -1258,6 +1285,73 @@ public float controlsPanelHeight = 50f;
 
             [Tooltip("FEEL. Separation push, meters per second.")]
             public float separationStrength = 1.2f;
+        }
+
+        [Serializable]
+        public class OfflineTuning
+        {
+            [Tooltip("GDD. Workers keep producing while the app is closed.")]
+            public bool enabled = true;
+
+            [Tooltip("ESTIMATE. Offline coins per hired worker per second. 0.03 is ~108 coins/hour per worker; 4 workers for 2 h is ~864.")]
+            public float coinsPerWorkerSecond = 0.03f;
+
+            [Tooltip("ESTIMATE. Offline planks per hired worker per second, banked to the stockpile. 0.01 is 36/hour per worker.")]
+            public float planksPerWorkerSecond = 0.01f;
+
+            [Tooltip("ESTIMATE. Most planks banked in one return. Matches stack.maxRenderedPlanks.")]
+            public int maxPlanks = 60;
+
+            [Tooltip("GDD. Offline cap, seconds. 2 h now; research can raise it to 8 h (28800).")]
+            public float capSeconds = 7200f;
+
+            [Tooltip("ESTIMATE. Shortest absence, seconds, that earns anything or shows the popup.")]
+            public float minAwaySeconds = 60f;
+
+            [Tooltip("ESTIMATE. Worker count assumed for -offline QA runs when fewer are hired.")]
+            public int qaMinWorkers = 2;
+
+            [Tooltip("GDD. Shows the ×3 rewarded-video button. Off until an ad SDK exists; it collects ×1 for now.")]
+            public bool showAdButton = false;
+
+            [Tooltip("LAYOUT. Popup canvas sorting order, above the HUD (10).")]
+            public int sortingOrder = 40;
+
+            [Tooltip("LAYOUT. Popup panel size, reference pixels.")]
+            public Vector2 panelSize = new Vector2(760f, 520f);
+
+            [Tooltip("LAYOUT. Button size, reference pixels.")]
+            public Vector2 buttonSize = new Vector2(280f, 84f);
+
+            [Tooltip("LAYOUT. Gap between the two buttons, reference pixels.")]
+            public float buttonGap = 40f;
+
+            [Tooltip("LAYOUT. Button centre height above the panel bottom, reference pixels.")]
+            public float buttonLift = 70f;
+
+            [Tooltip("LAYOUT.")]
+            public int titleFontSize = 60;
+
+            [Tooltip("LAYOUT.")]
+            public int bodyFontSize = 40;
+
+            [Tooltip("LAYOUT.")]
+            public int awayFontSize = 28;
+
+            [Tooltip("LAYOUT.")]
+            public int buttonFontSize = 30;
+
+            [Tooltip("FEEL. Full-screen dim behind the popup; also blocks taps until COLLECT.")]
+            public Color dimColor = new Color(0f, 0f, 0f, 0.6f);
+
+            [Tooltip("FEEL.")]
+            public Color panelColor = new Color(0.16f, 0.12f, 0.09f, 0.96f);
+
+            [Tooltip("FEEL.")]
+            public Color buttonColor = new Color(0.86f, 0.62f, 0.16f, 1f);
+
+            [Tooltip("FEEL.")]
+            public Color adButtonColor = new Color(0.24f, 0.5f, 0.28f, 1f);
         }
 
         [Serializable]
@@ -1773,6 +1867,109 @@ public float padRangeFactor = 0.62f;
         }
 
         [Serializable]
+        public class EliteTuning
+        {
+            [Tooltip("SPEC. Elites roll from the night after this one. Chance = perNight x (night - this).")]
+            public int eliteStartNight = 5;
+
+            [Tooltip("SPEC. Elite chance added per night past the start night.")]
+            public float elitePerNight = 0.02f;
+
+            [Tooltip("SPEC. Highest elite chance.")]
+            public float eliteMax = 0.25f;
+
+            [Tooltip("SPEC. Visual tier an elite shows at least. Champion = 3.")]
+            public int eliteMinTier = 3;
+
+            [Tooltip("SPEC. Shambler HP multiplier past the count cap that promotes to tier 2 (Ghoul).")]
+            public float tierPromoteAtHpx = 2f;
+
+            [Tooltip("SPEC. Shambler HP multiplier that promotes to tier 3 (Wight). Every x2 above base is a tier.")]
+            public float championAtHpx = 4f;
+
+            [Tooltip("SPEC. Night Threat that promotes every non-boss to at least tier 2. 0 turns it off.")]
+            public float veteranAtThreat = 8000f;
+
+            [Tooltip("ESTIMATE. Armored, Swift, Burning, Shielded, Splitter, Regen roll weights. 0 turns an affix off.")]
+            public float armoredWeight = 1f;
+
+            [Tooltip("ESTIMATE. Swift roll weight.")]
+            public float swiftWeight = 1f;
+
+            [Tooltip("ESTIMATE. Burning roll weight.")]
+            public float burningWeight = 1f;
+
+            [Tooltip("ESTIMATE. Shielded roll weight.")]
+            public float shieldedWeight = 1f;
+
+            [Tooltip("ESTIMATE. Splitter roll weight.")]
+            public float splitterWeight = 1f;
+
+            [Tooltip("ESTIMATE. Regen roll weight.")]
+            public float regenWeight = 1f;
+
+            [Tooltip("SPEC. Armored hit point multiplier.")]
+            public float armoredHp = 1.5f;
+
+            [Tooltip("SPEC. Swift move speed multiplier.")]
+            public float swiftSpeed = 1.4f;
+
+            [Tooltip("SPEC. Hits a Shielded elite blocks. Burn and spike ticks do not count.")]
+            public int shieldHits = 3;
+
+            [Tooltip("SPEC. Small shamblers a Splitter leaves on death.")]
+            public int splitCount = 2;
+
+            [Tooltip("ESTIMATE. Each split shambler's hit points, as a share of the parent's max.")]
+            public float splitHpShare = 0.25f;
+
+            [Tooltip("ESTIMATE. Live split shamblers allowed at once. The count cap also holds.")]
+            public int splitMaxLive = 24;
+
+            [Tooltip("LAYOUT. Sideways gap between split shamblers, meters.")]
+            public float splitSpread = 0.6f;
+
+            [Tooltip("ESTIMATE. Regen heal per second, as a share of max hit points.")]
+            public float regenPerSecond = 0.04f;
+
+            [Tooltip("ESTIMATE. Seconds without damage before Regen starts.")]
+            public float regenCalmSeconds = 2.5f;
+
+            [Tooltip("FEEL. Extra scale per tier above 1.")]
+            public float tierScaleStep = 0.08f;
+
+            [Tooltip("FEEL. Extra scale on an elite.")]
+            public float eliteScale = 0.06f;
+
+            [Tooltip("FEEL. Scale of a split shambler.")]
+            public float splitScale = 0.7f;
+
+            [Tooltip("FEEL. Tier 2 tint (Ghoul: pale). Multiplies the base color.")]
+            public Color tier2Tint = new Color(0.86f, 0.9f, 0.82f, 1f);
+
+            [Tooltip("FEEL. Tier 3 tint (Wight: bone grey).")]
+            public Color tier3Tint = new Color(0.72f, 0.7f, 0.78f, 1f);
+
+            [Tooltip("FEEL. Armored tint (iron bands).")]
+            public Color armoredTint = new Color(0.55f, 0.6f, 0.7f, 1f);
+
+            [Tooltip("FEEL. Swift tint (speed trails).")]
+            public Color swiftTint = new Color(0.7f, 0.9f, 1f, 1f);
+
+            [Tooltip("FEEL. Burning tint (ember aura).")]
+            public Color burningTint = new Color(1f, 0.55f, 0.3f, 1f);
+
+            [Tooltip("FEEL. Shielded tint (bubble).")]
+            public Color shieldedTint = new Color(0.6f, 0.75f, 1f, 1f);
+
+            [Tooltip("FEEL. Splitter tint (crack lines).")]
+            public Color splitterTint = new Color(0.85f, 0.75f, 0.55f, 1f);
+
+            [Tooltip("FEEL. Regen tint (green pulse).")]
+            public Color regenTint = new Color(0.55f, 1f, 0.55f, 1f);
+        }
+
+        [Serializable]
         public class ProgressionTuning
         {
             [Tooltip("SPEC. Seconds of night used by the Fort Power formula.")]
@@ -1937,6 +2134,86 @@ public float padRangeFactor = 0.62f;
                     return budget3;
                 return budget4;
             }
+        }
+
+        [Serializable]
+        public class EndlessTuning
+        {
+            [Tooltip("SPEC. Keep playing past wave.nightCount instead of resolving the run. Demo sessions still stop at nightCount.")]
+            public bool enabled = true;
+
+            [Tooltip("SPEC. Last authored night (maps 1–5 × 5). Later nights use the endless curve.")]
+            public int authoredNights = 25;
+
+            [Tooltip("SPEC. Endless threat growth per night past authoredNights.")]
+            public float endlessGrowth = 1.1f;
+
+            [Tooltip("SPEC. Blood Moon every this many endless nights (first one is authoredNights + this). 0 turns it off.")]
+            public int bloodMoonEvery = 10;
+
+            [Tooltip("SPEC. Blood Moon threat multiplier.")]
+            public float bloodMoonMult = 1.5f;
+
+            [Tooltip("SPEC. Blood Moon coin multiplier.")]
+            public float bloodMoonLoot = 2f;
+
+            [Tooltip("SPEC. Threat multiplier on the rest night after a Blood Moon.")]
+            public float restMult = 0.7f;
+
+            [Tooltip("SPEC. Expected power divisor on a Blood Moon.")]
+            public float targetBlood = 1f;
+
+            [Tooltip("SPEC. Expected power divisor on a rest night.")]
+            public float targetRest = 0.55f;
+
+            [Tooltip("ESTIMATE. Fort carries over between maps while only map 1 exists, so a new map's opener is at least this share of the last boss budget. Lifts nights 6–7 from ratio ~0.3 to ~0.65–0.75 in Play Mode QA (Tools/sim/threat_sim.py reads lower). 0 restores the map sawtooth for maps that rebuild the fort.")]
+            public float carryFloor = 0.6f;
+
+            [Tooltip("ESTIMATE. Carry floor growth per night inside a map.")]
+            public float carryStep = 1.08f;
+
+            [Tooltip("SPEC. First night of endless cash decay.")]
+            public int decayStart = 41;
+
+            [Tooltip("SPEC. Nights per cash-decay band.")]
+            public int decaySpan = 10;
+
+            [Tooltip("SPEC. Kill coins in the first decay band (nights 41–50).")]
+            public float decayFirst = 0.5f;
+
+            [Tooltip("SPEC. Kill coins in the second decay band (nights 51–60).")]
+            public float decaySecond = 0.25f;
+
+            [Tooltip("SPEC. Kill coins from the third band on (night 61+).")]
+            public float decayLast = 0.1f;
+        }
+
+        [Serializable]
+        public class PrestigeTuning
+        {
+            [Tooltip("SPEC. Embers_total = floor(emberK × sqrt(lifetime threat cleared / emberDiv)).")]
+            public float emberK = 10f;
+
+            [Tooltip("SPEC. Lifetime threat divisor in the Ember formula.")]
+            public float emberDiv = 10000f;
+
+            [Tooltip("SPEC. DPS bonus per claimed Ember.")]
+            public float emberDps = 0.03f;
+
+            [Tooltip("SPEC. Income bonus per claimed Ember.")]
+            public float emberIncome = 0.03f;
+
+            [Tooltip("SPEC. Same-family soft cap: eff = raw / (1 + raw / cap). 3 = 300%. 0 turns it off.")]
+            public float softCap = 3f;
+
+            [Tooltip("SPEC. Losses on one night before Rebuild is pushed.")]
+            public int offerLosses = 3;
+
+            [Tooltip("ESTIMATE. Rebuild on demand only from this night, so the FTUE never shows it.")]
+            public int demandNight = 10;
+
+            [Tooltip("LAYOUT. Rebuild button caption; the Ember gain follows it.")]
+            public string buttonLabel = "REBUILD +";
         }
     }
 }

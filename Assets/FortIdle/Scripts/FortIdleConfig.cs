@@ -2166,11 +2166,11 @@ public float padRangeFactor = 0.62f;
             [Tooltip("SPEC. Expected power divisor on a rest night.")]
             public float targetRest = 0.55f;
 
-            [Tooltip("ESTIMATE. Fort carries over between maps while only map 1 exists, so a new map's opener is at least this share of the last boss budget. Lifts nights 6–7 from ratio ~0.3 to ~0.55–0.65 (Tools/sim/threat_sim.py). 0 restores the map sawtooth for maps that rebuild the fort.")]
-            public float carryFloor = 0.65f;
+            [Tooltip("ESTIMATE. Fort carries over between maps while only map 1 exists, so a new map's opener is at least this share of the last boss budget. Lifts nights 6–7 from ratio ~0.3 to ~0.65–0.75 in Play Mode QA (Tools/sim/threat_sim.py reads lower). 0 restores the map sawtooth for maps that rebuild the fort.")]
+            public float carryFloor = 0.6f;
 
             [Tooltip("ESTIMATE. Carry floor growth per night inside a map.")]
-            public float carryStep = 1.25f;
+            public float carryStep = 1.08f;
 
             [Tooltip("SPEC. First night of endless cash decay.")]
             public int decayStart = 41;

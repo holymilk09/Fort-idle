@@ -79,7 +79,7 @@ namespace FortIdle
             plan.Power = FortPower();
             plan.BossNight = plan.Night % tune.bossEvery == 0;
             plan.BaseBudget = BaseBudget(plan.Night);
-            float expected = plan.BaseBudget / TargetRatio(plan.BossNight);
+            float expected = plan.BaseBudget / TargetRatio(plan.Night);
             plan.Band = 1f;
             if (plan.Night > tune.rubberOffUntil && expected > 1f)
             {
@@ -97,18 +97,79 @@ namespace FortIdle
         public static float BaseBudget(int night)
         {
             FortIdleConfig.ProgressionTuning tune = FortWorld.Config.progression;
+            FortIdleConfig.EndlessTuning endless = FortPrestige.Endless;
             int index = (night - 1) % 5;
             if (index < 0)
                 index = 0;
+            if (night > endless.authoredNights && endless.authoredNights > 0)
+            {
+                int maps = Mathf.Max(1, endless.authoredNights / 5);
+                float top = tune.MapBudget(4) * Mathf.Pow(tune.mapGrowth, maps - 1);
+                float budget = top * Mathf.Pow(endless.endlessGrowth, night - endless.authoredNights);
+                NightKind kind = KindOf(night);
+                if (kind == NightKind.BloodMoon)
+                    budget *= endless.bloodMoonMult;
+                else if (kind == NightKind.Rest)
+                    budget *= endless.restMult;
+                return budget;
+            }
+
             int map = Mathf.Min(5, (night - 1) / 5 + 1);
             float seed = tune.MapBudget(index);
-            return seed * Mathf.Pow(tune.mapGrowth, map - 1);
+            float value = seed * Mathf.Pow(tune.mapGrowth, map - 1);
+            if (map > 1 && endless.carryFloor > 0f)
+            {
+                float lastBoss = tune.MapBudget(4) * Mathf.Pow(tune.mapGrowth, map - 2);
+                value = Mathf.Max(value, endless.carryFloor * lastBoss * Mathf.Pow(endless.carryStep, index));
+            }
+
+            return value;
         }
 
-        static float TargetRatio(bool boss)
+        public static NightKind KindOf(int night)
+        {
+            FortIdleConfig.EndlessTuning endless = FortPrestige.Endless;
+            int every = endless.bloodMoonEvery;
+            int past = night - endless.authoredNights;
+            if (every > 0 && past > 0)
+            {
+                if (past % every == 0)
+                    return NightKind.BloodMoon;
+                if (past > 1 && (past - 1) % every == 0)
+                    return NightKind.Rest;
+            }
+
+            int boss = FortWorld.Config.progression.bossEvery;
+            return boss > 0 && night % boss == 0 ? NightKind.Boss : NightKind.Normal;
+        }
+
+        static float TargetRatio(int night)
         {
             FortIdleConfig.ProgressionTuning tune = FortWorld.Config.progression;
-            return boss ? tune.targetBoss : tune.targetNormal;
+            FortIdleConfig.EndlessTuning endless = FortPrestige.Endless;
+            NightKind kind = KindOf(night);
+            if (kind == NightKind.BloodMoon)
+                return endless.targetBlood;
+            if (kind == NightKind.Rest)
+                return endless.targetRest;
+            return kind == NightKind.Boss ? tune.targetBoss : tune.targetNormal;
+        }
+
+        public static float KillCoinScale()
+        {
+            MatchDirector match = FortWorld.Match;
+            int night = match != null ? match.NightIndex : 1;
+            FortIdleConfig.EndlessTuning endless = FortPrestige.Endless;
+            float scale = 1f;
+            if (endless.decayStart > 0 && night >= endless.decayStart)
+            {
+                int step = (night - endless.decayStart) / Mathf.Max(1, endless.decaySpan);
+                scale = step <= 0 ? endless.decayFirst : step == 1 ? endless.decaySecond : endless.decayLast;
+            }
+
+            if (FortWorld.Config != null && KindOf(night) == NightKind.BloodMoon)
+                scale *= endless.bloodMoonLoot;
+            return scale * FortPrestige.IncomeMult();
         }
 
         static void FillRoster(NightPlan plan)

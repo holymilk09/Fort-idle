@@ -80,8 +80,8 @@ namespace FortIdle
                 int marks = tune.heroMilestoneEvery > 0 ? MeleeLevel / tune.heroMilestoneEvery : 0;
                 float milestone = Mathf.Pow(tune.heroMilestoneMult, marks);
                 float focus = 1f + CoreFocus * tune.coreFocusBonus;
-                return config.heroCombat.swingDamage * steps * milestone * focus
-                    + SharpenLevel * config.heroCombat.sharpenDamage;
+                return (config.heroCombat.swingDamage * steps * milestone * focus
+                    + SharpenLevel * config.heroCombat.sharpenDamage) * FortPrestige.DpsMult();
             }
         }
 

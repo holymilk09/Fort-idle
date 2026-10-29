@@ -160,7 +160,7 @@ namespace FortIdle
                 CoinPickup.ScatterLoot(deathOrigin, DropKind.Sap, config.drops.sapPerTreant);
             }
 
-            int coins = Mathf.RoundToInt(maxHitPoints * config.progression.coinPerHp);
+            int coins = Mathf.RoundToInt(maxHitPoints * config.progression.coinPerHp * ThreatMath.KillCoinScale());
             if (coins < 1)
                 coins = 1;
             CoinPickup.ScatterCoins(deathOrigin, coins);

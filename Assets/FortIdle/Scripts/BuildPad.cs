@@ -438,10 +438,10 @@ namespace FortIdle
             if (FortMath.HorizontalDistance(point, transform.position) > defenses.spikeRadius)
                 return 0f;
             if (Tier >= 2)
-                return defenses.spikeLv3Damage;
+                return defenses.spikeLv3Damage * FortPrestige.DpsMult();
             if (Tier >= 1)
-                return defenses.spikeLv2Damage;
-            return defenses.spikeDamagePerSecond;
+                return defenses.spikeLv2Damage * FortPrestige.DpsMult();
+            return defenses.spikeDamagePerSecond * FortPrestige.DpsMult();
         }
 
         public bool WantsSpecial

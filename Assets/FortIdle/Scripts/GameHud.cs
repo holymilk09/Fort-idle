@@ -59,6 +59,12 @@ namespace FortIdle
         int seenHide = -1;
         int seenCore = -1;
         int seenSap = -1;
+        GameObject rebuildButton;
+        Text rebuildLabel;
+        Image rebuildImage;
+        Color rebuildIdle;
+        int seenEmberGain = -1;
+        bool seenRebuildPush;
 
         public static bool BlocksWorldLabel(Rect screen)
         {
@@ -298,6 +304,7 @@ MakeText(canvasObject.transform, "Controls", config.hud.controlsFontSize, TextAn
             PaintBoss(config);
             PaintDawn(config, match);
             PaintArrow(config, match);
+            PaintRebuild(config, match);
 
             if (match.Phase == MatchPhase.Resolved)
             {
@@ -595,6 +602,35 @@ MakeText(canvasObject.transform, "Controls", config.hud.controlsFontSize, TextAn
                 if (FortWorld.Progress != null)
                     FortWorld.Progress.BuySpeed(buyQty);
             });
+            MakeButton(parent, "RebuildButton", FortPrestige.Tune.buttonLabel, new Vector2(-36f, 360f), () => FortPrestige.Rebuild());
+            Transform rebuild = parent.Find("RebuildButton");
+            if (rebuild != null)
+            {
+                rebuildButton = rebuild.gameObject;
+                rebuildImage = rebuild.GetComponent<Image>();
+                rebuildLabel = rebuild.GetComponentInChildren<Text>();
+                rebuildIdle = rebuildImage != null ? rebuildImage.color : Color.black;
+                rebuildButton.SetActive(false);
+            }
+        }
+
+        void PaintRebuild(FortIdleConfig config, MatchDirector match)
+        {
+            if (rebuildButton == null)
+                return;
+            int gain = FortPrestige.Offered(match) ? FortPrestige.Gain() : 0;
+            bool pushed = gain > 0 && FortPrestige.Pushed(match);
+            if (gain == seenEmberGain && pushed == seenRebuildPush)
+                return;
+            seenEmberGain = gain;
+            seenRebuildPush = pushed;
+            rebuildButton.SetActive(gain > 0);
+            if (gain <= 0)
+                return;
+            if (rebuildLabel != null)
+                rebuildLabel.text = FortPrestige.Tune.buttonLabel + gain;
+            if (rebuildImage != null)
+                rebuildImage.color = pushed ? config.presentation.warningText : rebuildIdle;
         }
 
         void MakeButton(Transform parent, string name, string caption, Vector2 anchored, UnityEngine.Events.UnityAction action)

@@ -1,0 +1,43 @@
+# Unity generated
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
+
+# IDE
+.vs/
+.idea/
+.vscode/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS / local
+.DS_Store
+Thumbs.db
+*.swp
+crashlytics-buildid.txt
+sysinfo.txt
+
+# Agent scratch
+agent-tools/
+uploads/
+
+# Unity license / hub (never commit)
+.ulf
+*.alf

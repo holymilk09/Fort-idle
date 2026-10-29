@@ -1,0 +1,400 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4cb04576fe1f217fbb28eca224e1776, type: 3}
+  m_Name: FortIdleConfig
+  m_EditorClassIdentifier: Assembly-CSharp::FortIdle.FortIdleConfig
+  player:
+    moveSpeed: 5
+    moveAccelerationTime: 0.1
+    turnSharpness: 14
+    radius: 0.4
+    height: 1.8
+    gravity: 30
+    groundStickSpeed: 2
+    skinWidth: 0.05
+    stepOffset: 0.25
+    slopeLimit: 50
+    minMoveDistance: 0.001
+    visualBobAmplitude: 0.045
+    visualBobFrequency: 2.2
+    bodyRadius: 0.36
+    bodyHeight: 1.05
+    headDiameter: 0.42
+    headHeight: 1.48
+    spawnPosition: {x: 0, y: 0.15, z: 2.2}
+    spawnYawDegrees: 0
+    axeLocalPosition: {x: 0.42, y: 0.95, z: 0.42}
+    axeSize: {x: 0.1, y: 0.48, z: 0.1}
+    boundaryMargin: 1.25
+  stack:
+    capacity: 20
+    visualHeightStep: 0.12
+    maxRenderedPlanks: 60
+    extraPlankScale: 0.004
+    plankSize: {x: 0.48, y: 0.07, z: 0.26}
+    localOffset: {x: 0, y: 1.02, z: -0.34}
+    swayDegrees: 4
+    swaySmoothTime: 0.12
+  chop:
+    interval: 0.4
+    planksPerHit: 3
+    hitsToFellTree: 4
+    range: 1.8
+    stumpRespawnSeconds: 8
+    flyDuration: 0.15
+    flyArcHeight: 1.15
+    swingDegrees: 62
+    swingDuration: 0.16
+  pour:
+    planksPerSecond: 12
+    boostedPlanksPerSecond: 25
+    boostDelay: 1
+    padRadius: 1.45
+    padDiscHeight: 0.08
+    padDiscDiameter: 2.7
+    flyDuration: 0.12
+    flyArcHeight: 0.85
+    labelHeight: 2.15
+  structures:
+    wallCost: 40
+    wallHitPoints: 300
+    turretCost: 80
+    hutCost: 150
+    hutBodySize: {x: 2.2, y: 1.5, z: 2}
+    hutRoofSize: {x: 2.6, y: 0.38, z: 2.4}
+    hutDoorSize: {x: 0.7, y: 0.95, z: 0.16}
+    wallSize: {x: 7.2, y: 2.5, z: 0.5}
+    turretBaseHeight: 1.2
+    turretBaseRadius: 0.55
+    turretBarrelSize: {x: 0.22, y: 0.22, z: 1.15}
+    turretBarrelLocalPosition: {x: 0, y: 1.15, z: 0.35}
+    turretCapDiameter: 0.7
+    turretCapHeight: 1.28
+    buildRiseDuration: 0.55
+    buildOvershoot: 1.7
+  turret:
+    damage: 25
+    shotsPerSecond: 2
+    range: 12
+    projectileSpeed: 24
+    projectileRadius: 0.14
+    projectileLifetime: 1.25
+    projectileHitRadius: 0.55
+    yawSharpness: 12
+    muzzleForward: 0.62
+  monsters:
+    hitPoints: 60
+    moveSpeed: 1.5
+    attackDamage: 3
+    attackInterval: 1
+    attackRange: 1.2
+    contactGap: 0.45
+    radius: 0.4
+    height: 1.45
+    eyeDiameter: 0.16
+    eyeHeight: 1.12
+    eyeForward: 0.22
+    eyeSeparation: 0.18
+    deathDuration: 0.4
+    deathSinkDistance: 0.8
+    separationRadius: 0.75
+    separationStrength: 1.4
+    bruteHitPoints: 600
+    bruteMoveSpeed: 1.1
+    bruteAttackDamage: 6
+    bruteRadius: 0.85
+    bruteHeight: 2.35
+    bruteHornSize: {x: 0.16, y: 0.55, z: 0.16}
+    bruteHornHeight: 2.05
+    bruteHornSpread: 0.42
+    bruteHornTilt: 18
+    treantHitPoints: 3000
+    treantMoveSpeed: 0.7
+    treantAttackDamage: 48
+    treantTrunkDiameter: 1.2
+    treantTrunkHeight: 3.1
+    treantCanopyDiameter: 2.6
+    treantCanopyHeight: 3.4
+    hitFlashDuration: 0.12
+    hitFlashScale: 0.18
+    maxWallAttackers: 8
+    queueSpacing: 0.95
+  wave:
+    dayDuration: 60
+    laterDayDuration: 90
+    nightWarningSeconds: 20
+    nightDuration: 45
+    nightCount: 10
+    monsterCount: 12
+    night2Shamblers: 20
+    night3Shamblers: 30
+    night3Brutes: 1
+    night4Shamblers: 40
+    night4Brutes: 2
+    night5Shamblers: 25
+    night5Treants: 1
+    spawnInterval: 0.35
+    resultHoldSeconds: 8
+  fire:
+    hitPoints: 1000
+    position: {x: 0, y: 0, z: 0}
+    flameDiameter: 0.85
+    flameHeight: 0.7
+    logSize: {x: 0.9, y: 0.16, z: 0.22}
+    minVisualScale: 0.15
+    emission: 2.4
+  layout:
+    groundExtent: 48
+    groundThickness: 1
+    clearingDiameter: 15
+    clearingThickness: 0.06
+    clearingY: 0.03
+    wallPadPosition: {x: 0, y: 0, z: 4.2}
+    wallLocalOffset: {x: 0, y: 0, z: 2.6}
+    turretPadPosition: {x: 3.4, y: 0, z: 1.2}
+    watchPosition: {x: 0, y: 0, z: -1.4}
+    frontTreeCount: 10
+    frontTreeSpacing: 1.65
+    frontTreeZ: 10.5
+    sideTreeX: 12
+    sideTreeCountPerSide: 4
+    sideTreeZStart: 0.4
+    sideTreeZSpacing: 2.3
+    trunkHeight: 2.15
+    trunkRadius: 0.28
+    canopyDiameter: 2.05
+    canopyHeight: 2.55
+    stumpHeight: 0.32
+    stumpRadius: 0.34
+    spawnZ: 18
+    spawnHalfWidth: 3
+    spawnHeight: 0
+    stackPadPosition: {x: -2.4, y: 0, z: 0.8}
+    speedPadPosition: {x: 2.4, y: 0, z: -1.6}
+    hutPadPosition: {x: -4.8, y: 0, z: -2.4}
+    hutLocalOffset: {x: 0, y: 0, z: -1.55}
+    hirePadPosition: {x: -7.4, y: 0, z: 0.8}
+    stockpileOffset: {x: 2.3, y: 0, z: -1.55}
+    lockedAreaPosition: {x: 0, y: 0, z: 22}
+    lockedGateSize: {x: 8, y: 2.4, z: 0.45}
+    lockedPostSize: {x: 0.5, y: 3.3, z: 0.5}
+    lockedPostSpread: 4.3
+    lockedLabelHeight: 3.6
+  cameraRig:
+    pitchDegrees: 50
+    distance: 11
+    fieldOfView: 34
+    yawDegrees: 0
+    lookHeight: 1.3
+    followSmoothTime: 0.14
+    lookSmoothTime: 0.08
+    nearClip: 0.08
+    farClip: 180
+    teaseDuration: 1.6
+    teaseHold: 1.5
+    teaseReturnDuration: 1.3
+    teaseLookHeight: 1.6
+  joystick:
+    baseSize: 168
+    knobSize: 74
+    travel: 58
+    deadzone: 0.12
+    margin: 52
+    spriteResolution: 64
+    baseAlpha: 0.42
+    knobAlpha: 0.92
+  hud:
+    referenceWidth: 1920
+    referenceHeight: 1080
+    stackFontSize: 34
+    timerFontSize: 56
+    hintFontSize: 30
+    resultFontSize: 68
+    fireFontSize: 28
+    controlsFontSize: 22
+    labelMargin: 36
+    matchWidthOrHeight: 0.5
+    stackPanelWidth: 700
+    sidePanelWidth: 420
+    widePanelWidth: 1400
+    panelHeight: 80
+    timerPanelHeight: 120
+    resultPanelHeight: 160
+    controlsPanelHeight: 50
+    timerWarningScale: 1.14
+    timerPulseSpeed: 5
+    worldLabelSize: {x: 280, y: 140}
+    worldCanvasScale: 0.012
+    worldLabelFontSize: 42
+    damageNumberDuration: 0.65
+    damageNumberRise: 1.15
+    damageNumberScale: 0.008
+    damageNumberFontSize: 56
+  presentation:
+    grass: {r: 0.34, g: 0.46, b: 0.26, a: 1}
+    dirt: {r: 0.45, g: 0.36, b: 0.22, a: 1}
+    heroBody: {r: 0.18, g: 0.42, b: 0.78, a: 1}
+    heroHead: {r: 0.93, g: 0.76, b: 0.58, a: 1}
+    axe: {r: 0.55, g: 0.57, b: 0.6, a: 1}
+    plank: {r: 0.76, g: 0.55, b: 0.28, a: 1}
+    trunk: {r: 0.38, g: 0.25, b: 0.13, a: 1}
+    canopy: {r: 0.18, g: 0.46, b: 0.2, a: 1}
+    stump: {r: 0.32, g: 0.22, b: 0.12, a: 1}
+    padWall: {r: 0.95, g: 0.78, b: 0.2, a: 1}
+    padTurret: {r: 0.95, g: 0.42, b: 0.16, a: 1}
+    padActive: {r: 1, g: 0.95, b: 0.55, a: 1}
+    padComplete: {r: 0.4, g: 0.82, b: 0.42, a: 1}
+    wall: {r: 0.58, g: 0.4, b: 0.22, a: 1}
+    turret: {r: 0.25, g: 0.28, b: 0.32, a: 1}
+    turretAccent: {r: 0.15, g: 0.62, b: 0.9, a: 1}
+    monster: {r: 0.12, g: 0.13, b: 0.12, a: 1}
+    monsterEye: {r: 1, g: 0.22, b: 0.12, a: 1}
+    brute: {r: 0.42, g: 0.16, b: 0.12, a: 1}
+    bruteHorn: {r: 0.72, g: 0.66, b: 0.52, a: 1}
+    fire: {r: 1, g: 0.48, b: 0.08, a: 1}
+    fireLog: {r: 0.3, g: 0.16, b: 0.08, a: 1}
+    bolt: {r: 1, g: 0.92, b: 0.45, a: 1}
+    daySky: {r: 0.58, g: 0.76, b: 0.92, a: 1}
+    duskSky: {r: 0.86, g: 0.42, b: 0.24, a: 1}
+    nightSky: {r: 0.05, g: 0.07, b: 0.14, a: 1}
+    daySun: {r: 1, g: 0.96, b: 0.86, a: 1}
+    nightSun: {r: 0.55, g: 0.66, b: 0.95, a: 1}
+    warningText: {r: 1, g: 0.32, b: 0.22, a: 1}
+    hudText: {r: 0.96, g: 0.94, b: 0.88, a: 1}
+    resultWin: {r: 0.55, g: 0.95, b: 0.55, a: 1}
+    resultFail: {r: 1, g: 0.45, b: 0.35, a: 1}
+    joystickBase: {r: 0.05, g: 0.06, b: 0.08, a: 1}
+    joystickKnob: {r: 0.95, g: 0.95, b: 0.92, a: 1}
+    coin: {r: 1, g: 0.82, b: 0.18, a: 1}
+    padBag: {r: 0.25, g: 0.62, b: 0.95, a: 1}
+    padSpeed: {r: 0.58, g: 0.38, b: 0.92, a: 1}
+    padHut: {r: 0.62, g: 0.4, b: 0.22, a: 1}
+    padHire: {r: 0.95, g: 0.78, b: 0.28, a: 1}
+    hutBody: {r: 0.55, g: 0.34, b: 0.18, a: 1}
+    hutRoof: {r: 0.45, g: 0.16, b: 0.12, a: 1}
+    hutDoor: {r: 0.16, g: 0.1, b: 0.07, a: 1}
+    workerBody: {r: 0.18, g: 0.55, b: 0.38, a: 1}
+    workerHead: {r: 0.93, g: 0.76, b: 0.58, a: 1}
+    lockedGate: {r: 0.32, g: 0.3, b: 0.36, a: 1}
+    lockedPost: {r: 0.42, g: 0.4, b: 0.46, a: 1}
+    coinEmission: 2.6
+    daySunIntensity: 1.15
+    nightSunIntensity: 0.32
+    daySunPitch: 52
+    nightSunPitch: 24
+    sunYaw: -38
+    duskMidpoint: 0.45
+    ambientDay: 0.55
+    ambientNight: 0.22
+    materialSmoothness: 0.16
+    materialMetallic: 0
+    eyeEmission: 3.2
+    boltEmission: 2.2
+    hitStopScale: 0.05
+    hitStopSeconds: 0.08
+    windowWidth: 1280
+    windowHeight: 720
+    targetFrameRate: 60
+    enableShadows: 0
+    runInBackground: 1
+    statusLogInterval: 2
+    fillBarHeight: 1.7
+    fillBarSize: {x: 0.18, y: 1, z: 0.18}
+  copy:
+    woodLabel: WOOD
+    untilNight: UNTIL NIGHT
+    nightPrefix: N
+    hordeLabel: HORDE
+    fireLabel: FIRE
+    hintChop: Stack wood!
+    hintPourWall: "Stand on the yellow pad \u2014 pour the wall"
+    hintPourTurret: "Stand on the orange pad \u2014 pour the turret"
+    hintStackFull: "Stack full \u2014 pour it into a pad"
+    hintReady: Wall and turret are up. Brace for night.
+    hintNight: Night falls. The turret takes the shot.
+    hintNoTurret: "No turret yet \u2014 the horde is on the wall."
+    resultClear: The clearing holds
+    resultFail: The fire went out
+    wallName: WALL
+    turretName: TURRET
+    controls: WASD or the joystick
+    coinsLabel: COINS
+    crewLabel: CREW
+    speedLabel: SPEED
+    bagName: BAG
+    hutName: HUT
+    hireName: HIRE
+    lockedLabel: LOCKED
+    maxLabel: MAX
+    stockpileName: STOCK
+    hintPourHut: "Stand on the brown pad \u2014 build the hut"
+    hintUpgradeBag: "Stand on the blue pad \u2014 bigger stack"
+    hintUpgradeSpeed: "Stand on the purple pad \u2014 move faster"
+    hintHire: Stand on the gold pad to hire a worker
+    hintWorkers: Workers chop and haul on their own.
+  loot:
+    coinsPerKill: 5
+    pickupRadius: 1.15
+    magnetRadius: 30
+    magnetSpeed: 18
+    scatterRadius: 0.85
+    popDuration: 0.28
+    popArcHeight: 1.35
+    restHeight: 0.32
+    dropHeight: 0.9
+    coinDiameter: 0.34
+    coinThickness: 0.08
+    spinDegreesPerSecond: 200
+  upgrades:
+    stackBaseCost: 50
+    stackCostMultiplier: 1.6
+    capacityLevel0: 20
+    capacityLevel1: 40
+    capacityLevel2: 60
+    capacityLevel3: 90
+    capacityLevel4: 120
+    speedBaseCost: 50
+    speedCostMultiplier: 1.6
+    speedBonusPerLevel: 0.1
+    speedCap: 7.5
+    speedMaxLevels: 5
+    hireBaseCost: 60
+    hireCostMultiplier: 1.5
+    maxWorkers: 4
+    payDelay: 0.6
+    maxStackLevel: 4
+  workers:
+    moveSpeed: 3.5
+    carryCapacity: 15
+    bodyRadius: 0.28
+    bodyHeight: 0.8
+    headDiameter: 0.3
+    headHeight: 1.02
+    turnSharpness: 10
+    chopRangeFactor: 0.82
+    deliverPlanksPerSecond: 8
+    padArriveDistance: 0.9
+    stockArriveDistance: 0.7
+    spawnLocal: {x: 1.1, y: 0, z: 1.5}
+    spawnSpacing: 0.8
+    separationRadius: 0.7
+    separationStrength: 1.2
+  demo:
+    runByDefault: 0
+    repickInterval: 0.2
+    chopRangeFactor: 0.78
+    padRangeFactor: 0.62
+    watchArrive: 0.4
+    stackLevelsToBuy: 1
+    speedLevelsToBuy: 1
+    workersToHire: 1
+    workerFollowGap: 2.4

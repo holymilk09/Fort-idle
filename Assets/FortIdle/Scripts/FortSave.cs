@@ -88,7 +88,7 @@ namespace FortIdle
             PendingNight = 0;
             SavedTicks = 0;
             pending = null;
-            if (DemoSession() || HasFlag("-elements") || StageShowcase.Requested() || LookReel.Requested() || PerfHarness.Requested() || TreeShots.Requested() || QaShot.Requested() || PoseShot.Requested())
+            if (Harness())
                 return;
             Blob blob = Read(PlayerKey);
             if (blob == null || FortWorld.Progress == null)
@@ -168,16 +168,22 @@ namespace FortIdle
             pending = null;
         }
 
+        // Demo and QA harness runs neither load nor write the player's save.
+        static bool Harness()
+        {
+            return DemoSession() || HasFlag("-elements") || StageShowcase.Requested() || LookReel.Requested() || PerfHarness.Requested() || TreeShots.Requested() || QaShot.Requested() || PoseShot.Requested();
+        }
+
         public static void WritePlayer()
         {
-            if (Restoring || DemoSession() || FortWorld.Progress == null)
+            if (Restoring || Harness() || FortWorld.Progress == null)
                 return;
             Write(PlayerKey);
         }
 
         public static void WriteRebuild()
         {
-            if (DemoSession() || FortWorld.Progress == null)
+            if (Harness() || FortWorld.Progress == null)
                 return;
             Blob blob = new Blob();
             blob.night = 0;

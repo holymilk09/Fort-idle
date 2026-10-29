@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Globalization;
+using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,7 +20,11 @@ namespace FortIdle
             if (FakedSeconds(out faked))
             {
                 if (!PerfHarness.Requested())
+                {
                     Offer(faked, true);
+                    if (popup != null && ShotDirGiven())
+                        StartCoroutine(QaCapture());
+                }
                 return;
             }
 
@@ -66,6 +72,28 @@ namespace FortIdle
                 || QaShot.Requested()
                 || PoseShot.Requested()
                 || PoseCheck.Requested();
+        }
+
+        // QA evidence for -offline with -shotdir: the popup, then the wallet after COLLECT.
+        IEnumerator QaCapture()
+        {
+            string dir = PoseShot.ShotDir();
+            yield return new WaitForSeconds(1f);
+            yield return new WaitForEndOfFrame();
+            ScreenCapture.CaptureScreenshot(Path.Combine(dir, "offline-popup.png"));
+            yield return new WaitForSeconds(0.5f);
+            int before = FortWorld.Progress != null ? FortWorld.Progress.Coins : 0;
+            Collect();
+            int after = FortWorld.Progress != null ? FortWorld.Progress.Coins : 0;
+            Debug.Log("FORTIDLE offline qa coinsBefore=" + before + " coinsAfter=" + after);
+            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForEndOfFrame();
+            ScreenCapture.CaptureScreenshot(Path.Combine(dir, "offline-collected.png"));
+        }
+
+        static bool ShotDirGiven()
+        {
+            return Array.IndexOf(Environment.GetCommandLineArgs(), "-shotdir") >= 0;
         }
 
         static bool FakedSeconds(out float seconds)

@@ -20,7 +20,7 @@ namespace FortIdle
         }
 
         // -shotdir <path> picks the output folder; otherwise the player's persistent data folder.
-        static string ShotDir()
+        public static string ShotDir()
         {
             string dir = Application.persistentDataPath;
             string[] args = System.Environment.GetCommandLineArgs();

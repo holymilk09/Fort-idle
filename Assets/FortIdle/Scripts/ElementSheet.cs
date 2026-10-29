@@ -10,7 +10,7 @@ namespace FortIdle
         const float PitchX = 11f;
         const float PitchZ = 9f;
         const float LabelZ = -3.7f;
-        const string ShotPath = "/opt/cursor/artifacts/fort-idle-elements-v5.png";
+        const string ShotName = "fort-idle-elements-v5.png";
 
         public static bool Requested()
         {
@@ -153,13 +153,11 @@ namespace FortIdle
 
         IEnumerator Capture()
         {
-            string directory = System.IO.Path.GetDirectoryName(ShotPath);
-            if (!string.IsNullOrEmpty(directory))
-                System.IO.Directory.CreateDirectory(directory);
+            string path = System.IO.Path.Combine(PoseShot.ShotDir(), ShotName);
             yield return new WaitForSeconds(0.4f);
-            ScreenCapture.CaptureScreenshot(ShotPath);
+            ScreenCapture.CaptureScreenshot(path);
             yield return new WaitForSeconds(0.8f);
-            Debug.Log("FORTIDLE elements=saved path=" + ShotPath);
+            Debug.Log("FORTIDLE elements=saved path=" + path);
             Application.Quit();
         }
 

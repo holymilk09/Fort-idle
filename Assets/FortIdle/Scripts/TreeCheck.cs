@@ -90,10 +90,9 @@ namespace FortIdle
             file.Append(summary).Append('\n');
             try
             {
-                Directory.CreateDirectory("/opt/cursor/artifacts");
-                File.WriteAllText("/opt/cursor/artifacts/tree-up-assertion.txt", file.ToString());
+                File.WriteAllText(Path.Combine(PoseShot.ShotDir(), "tree-up-assertion.txt"), file.ToString());
             }
-            catch (IOException error)
+            catch (System.Exception error) // UnauthorizedAccessException is not an IOException; never break boot
             {
                 Debug.Log("FORTIDLE tree-check file FAIL " + error.Message);
             }

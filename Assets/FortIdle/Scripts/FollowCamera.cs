@@ -32,6 +32,8 @@ namespace FortIdle
         float pullbackVelocity;
         Monster bossNear;
         float bossPeak;
+        float peakPullback;
+        float peakDistance;
 
         public bool Teasing => mode != Mode.Follow;
 
@@ -150,7 +152,8 @@ namespace FortIdle
             if (boss != bossNear)
             {
                 if (bossNear != null)
-                    Debug.Log("FORTIDLE boss-frame peak=" + bossPeak.ToString("0.00") + " pullback=" + pullback.ToString("0.00"));
+                    Debug.Log("FORTIDLE boss-frame peak=" + bossPeak.ToString("0.00") + " pullback=" + pullback.ToString("0.00")
+                        + " atPullback=" + peakPullback.ToString("0.00") + " atDistance=" + peakDistance.ToString("0.0"));
                 bossNear = boss;
                 bossPeak = 0f;
                 if (boss != null)
@@ -196,7 +199,11 @@ namespace FortIdle
                 return;
             float fraction = bossNear.ScreenFraction(FortWorld.Camera);
             if (fraction > bossPeak)
+            {
                 bossPeak = fraction;
+                peakPullback = pullback;
+                peakDistance = Vector3.Distance(transform.position, bossNear.transform.position);
+            }
         }
 
         void ApplyNudge()

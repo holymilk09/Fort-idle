@@ -1,0 +1,4 @@
+.refs/
+.out/
+bin/
+obj/

@@ -1,0 +1,3 @@
+# Errors from Unity 6 APIs that the 2021.3 reference assemblies lack. One substring per line.
+# Only add a line after checking the API exists in Unity 6000.3 docs.
+'Mesh' does not contain a definition for 'lodCount'
